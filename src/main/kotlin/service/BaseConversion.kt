@@ -1,12 +1,14 @@
 package service
 
 import org.springframework.stereotype.Service
+import kotlin.math.pow
 
 @Service
 class BaseConversion {
     private val allowedString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     private val allowedCharacters = allowedString.toCharArray()
     private val base = allowedCharacters.size
+    private val indexMap = allowedString.indices.associateBy { allowedString[it] }
 
     fun encode(input: Long): String {
         val encodedString = StringBuilder()
@@ -21,7 +23,7 @@ class BaseConversion {
             tempInput /= base
         }
 
-        return encodedString.reverse().toString()
+        return encodedString.toString()
     }
 
     fun decode(input: String): Long {
@@ -31,7 +33,7 @@ class BaseConversion {
         var decoded = 0L
         var counter = 1
         for (i in 0 until length) {
-            decoded += allowedString.indexOf(characters[i]) * Math.pow(base.toDouble(), (length - counter).toDouble()).toLong()
+            decoded += indexMap[characters[i]]!! * base.toDouble().pow((length - counter).toDouble()).toLong()
             counter++
         }
         return decoded
